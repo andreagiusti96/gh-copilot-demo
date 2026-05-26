@@ -14,11 +14,13 @@ namespace UnsecureApp.Controllers
             {
                 byte[] b = new byte[1024];
                 UTF8Encoding temp = new UTF8Encoding(true);
-
-                while (fs.Read(b, 0, b.Length) > 0)
+                StringBuilder sb = new StringBuilder();
+                int bytesRead;
+                while ((bytesRead = fs.Read(b, 0, b.Length)) > 0)
                 {
-                    return temp.GetString(b);
+                    sb.Append(temp.GetString(b, 0, bytesRead));
                 }
+                return sb.ToString();
             }
 
             return null;
@@ -28,14 +30,20 @@ namespace UnsecureApp.Controllers
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
+                connection.Open();
                 SqlCommand sqlCommand = new SqlCommand()
                 {
                     CommandText = "SELECT ProductId FROM Products WHERE ProductName = '" + productName + "'",
                     CommandType = CommandType.Text,
+                    Connection = connection
                 };
 
                 SqlDataReader reader = sqlCommand.ExecuteReader();
-                return reader.GetInt32(0); 
+                if (reader.Read())
+                {
+                    return reader.GetInt32(0);
+                }
+                return -1;
             }
         }
 

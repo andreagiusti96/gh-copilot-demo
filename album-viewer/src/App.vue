@@ -1,9 +1,14 @@
 <template>
   <div class="app">
     <header class="header">
+      <div class="header-bar">
+        <CartIcon @open="cartOpen = true" />
+      </div>
       <h1>🎵 Album Collection</h1>
       <p>Discover amazing music albums</p>
     </header>
+
+    <CartDrawer :open="cartOpen" @close="cartOpen = false" />
 
     <main class="main">
       <div v-if="loading" class="loading">
@@ -31,11 +36,14 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import AlbumCard from './components/AlbumCard.vue'
+import CartIcon from './components/CartIcon.vue'
+import CartDrawer from './components/CartDrawer.vue'
 import type { Album } from './types/album'
 
 const albums = ref<Album[]>([])
 const loading = ref<boolean>(true)
 const error = ref<string | null>(null)
+const cartOpen = ref<boolean>(false)
 
 const fetchAlbums = async (): Promise<void> => {
   try {
@@ -66,6 +74,15 @@ onMounted(() => {
   text-align: center;
   margin-bottom: 3rem;
   color: white;
+  position: relative;
+}
+
+.header-bar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .header h1 {

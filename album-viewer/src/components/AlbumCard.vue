@@ -21,20 +21,40 @@
     </div>
     
     <div class="album-actions">
-      <button class="btn btn-primary">Add to Cart</button>
-      <button class="btn btn-secondary">Preview</button>
+      <button
+        v-if="!inCart"
+        class="btn btn-primary"
+        type="button"
+        @click="cart.add(album)"
+      >
+        Add to Cart
+      </button>
+      <button
+        v-else
+        class="btn btn-secondary"
+        type="button"
+        @click="cart.remove(album.id)"
+      >
+        Remove from Cart
+      </button>
+      <button class="btn btn-secondary" type="button">Preview</button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { Album } from '../types/album'
+import { useCart } from '../stores/cart'
 
 interface Props {
   album: Album
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
+
+const cart = useCart()
+const inCart = computed(() => cart.has(props.album.id))
 
 const handleImageError = (event: Event): void => {
   const target = event.target as HTMLImageElement
