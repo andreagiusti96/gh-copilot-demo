@@ -4,4 +4,7 @@ export interface Album {
   artist: string
   price: number
   image_url: string
+  year?: number
 }
+
+export type CartItem = Album
